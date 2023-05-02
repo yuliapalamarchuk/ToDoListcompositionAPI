@@ -57,35 +57,68 @@
 
 <script setup>
 // import
-import { ref } from "vue";
-import { v4 as uuidv4 } from "uuid";
+import { ref, onMounted} from "vue";
+import { db } from "@/firebase";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  addDoc,
+  updateDoc
+} from "firebase/firestore";
+
+
+// firebase
+
+const toDoCollectionRef = collection(db, "todos");
 
 // todo Array
 const todos = ref([]);
+
+// import todo(firebase)
+
+
+onMounted(()=>{
+   onSnapshot(toDoCollectionRef, (querySnapshot) => {
+    const fbTodos = [];
+    querySnapshot.forEach((doc) => {
+      const todo = {
+        id: doc.id,
+        content: doc.data().content,
+        done: doc.data().done
+      };
+      fbTodos.push(todo);
+    });
+    todos.value = fbTodos;
+  });
+});
+
+ 
 
 // input
 const newToDoContent = ref("");
 
 // send form
 const addTodo = () => {
-  const newTodo = {
-    id: uuidv4(),
+  addDoc(toDoCollectionRef, {
     content: newToDoContent.value,
     done: false,
-  };
-  todos.value.push(newTodo);
+  });
   newToDoContent.value = "";
 };
 
 // delete task
 const deleteToDo = (id) => {
-  todos.value = todos.value.filter((todo) => todo.id !== id);
+  deleteDoc(doc(toDoCollectionRef, id));
 };
 
 // check toggler
 const toggler = (id) => {
   const findDone = todos.value.findIndex((todo) => todo.id === id);
-  todos.value[findDone].done = !todos.value[findDone].done;
+ updateDoc(doc(toDoCollectionRef, id), {
+  done: !todos.value[findDone].done
+});
 };
 </script>
 
