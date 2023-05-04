@@ -18,7 +18,7 @@
         </p>
       </div>
     </form>
-
+    
     <div v-for="todo in todos" :key="todo.id" class="card mb-5">
       <div class="card-content">
         <div class="content">
@@ -54,9 +54,10 @@
   </div>
 </template>
 
-
 <script setup>
-// import
+/**
+ * import
+ */
 import { ref, onMounted } from "vue";
 import { db } from "@/firebase";
 import {
@@ -70,17 +71,18 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-
-// firebase
-
+/**
+ * firebase
+ */
 const toDoCollectionRef = collection(db, "todos");
 const toDoCollectionQuery = query(toDoCollectionRef, orderBy("date", "desc"), limit(100));
-
-// todo Array
+/**
+ * todo Array
+ */
 const todos = ref([]);
-
-// import todo(firebase)
-
+/**
+ * import todo from firebase
+ */
 onMounted(() => {
   onSnapshot(toDoCollectionQuery, (querySnapshot) => {
     const fbTodos = [];
@@ -95,11 +97,13 @@ onMounted(() => {
     todos.value = fbTodos;
   });
 });
-
-// input
+/**
+ * input
+ */
 const newToDoContent = ref("");
-
-// send form
+/**
+ * send form
+ */
 const addTodo = () => {
   addDoc(toDoCollectionRef, {
     content: newToDoContent.value,
@@ -108,13 +112,15 @@ const addTodo = () => {
   });
   newToDoContent.value = "";
 };
-
-// delete task
+/**
+ * delete task
+ */
 const deleteToDo = (id) => {
   deleteDoc(doc(toDoCollectionRef, id));
 };
-
-// check toggler
+/**
+ * check toggler
+ */
 const toggler = (id) => {
   const findDone = todos.value.findIndex((todo) => todo.id === id);
   updateDoc(doc(toDoCollectionRef, id), {
@@ -123,20 +129,6 @@ const toggler = (id) => {
 };
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style>
 @import "bulma/css/bulma.min.css";
 .wrapper-todo {
@@ -144,7 +136,6 @@ const toggler = (id) => {
   margin: 0 auto;
   max-width: 400px;
 }
-
 .line-through {
   text-decoration: line-through;
 }
