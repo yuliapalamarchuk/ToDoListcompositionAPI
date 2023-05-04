@@ -132,7 +132,7 @@ const toggler = (id) => {
 <style>
 @import "bulma/css/bulma.min.css";
 .wrapper-todo {
-  padding: 20px;
+  padding: 21px;
   margin: 0 auto;
   max-width: 400px;
 }
